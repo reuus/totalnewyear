@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добро пожаловать</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .content-container {
+            text-align: center;
+            color: white;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            margin: 10px;
+            padding: 15px 30px;
+            font-size: 16px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .popup {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        body:before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff0000, #ff9900, #ffcc00, #33cc33, #3399ff, #cc66ff);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content-container">
+        <h1>Добро пожаловать</h1>
+        <p>Выберите один из вариантов:</p>
+        
+        <button onclick="promptForPasswordAndRedirect()">Изменить</button>
+        <button onclick="showPopup()">Внести название</button>
+
+        <div class="overlay" id="overlay" onclick="hidePopup()">
+            <div class="popup" onclick="event.stopPropagation();">
+                <label for="inputText">Введите текст:</label>
+                <input type="text" id="inputText">
+                <br>
+                <button id="saveButton" onclick="saveAndRedirect()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var correctPassword = 123456789; // Замените на свой пароль
+
+        function showPopup() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('overlay').style.display = 'flex';
+        }
+
+        function hidePopup() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function saveAndRedirect() {
+            var inputText = document.getElementById('inputText').value;
+
+            if (inputText.trim() !== '') {
+                var savedData = JSON.parse(localStorage.getItem('savedData')) || [];
+                savedData.push({ text: inputText, points: 0 });
+                localStorage.setItem('savedData', JSON.stringify(savedData));
+
+                window.location.href = 'table.html?hideActions=true';
+            } else {
+                alert('Пожалуйста, введите текст перед сохранением.');
+            }
+
+            hidePopup();
+        }
+
+        function redirectToTable(hideActions) {
+            var url = 'table.html';
+            if (hideActions) {
+                url += '?hideActions=true';
+            }
+            window.location.href = url;
+        }
+
+        function promptForPasswordAndRedirect() {
+    var enteredPassword = prompt('Введите пароль для доступа к изменениям:');
+    if (enteredPassword == correctPassword) {
+        redirectToTable(false);
+    } else {
+        alert('Неверный пароль. Доступ запрещен.');
+    }
+}
+    </script>
+
+</body>
+</html>
